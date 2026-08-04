@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nova Bank — Banco Digital</title>
+<meta name="description" content="Banco digital com login, saldo, extrato, PIX e transferência." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<section class="login-screen" id="loginScreen">
+  <div class="login-art">
+    <div class="brand">
+      <span class="logo">N</span>
+      <span class="brand-name">Nova Bank</span>
+    </div>
+    <h1>O banco que<br>trabalha no seu ritmo.</h1>
+    <p>Saldo, extrato, PIX e transferências em segundos. Sem fila, sem tarifa, sem complicação.</p>
+    <ul class="art-list">
+      <li>Conta 100% digital e gratuita</li>
+      <li>PIX ilimitado 24h por dia</li>
+      <li>Cartão sem anuidade</li>
+    </ul>
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+  </div>
+
+  <div class="login-panel">
+    <form class="login-card" id="loginForm" autocomplete="off">
+      <h2>Entrar na conta</h2>
+      <p class="muted">Use os dados de demonstração abaixo.</p>
+
+      <label for="cpf">CPF</label>
+      <input id="cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" value="123.456.789-00" />
+
+      <label for="senha">Senha</label>
+      <div class="pass-wrap">
+        <input id="senha" type="password" placeholder="••••••" value="1234" />
+        <button type="button" class="ghost-btn" id="togglePass">ver</button>
+      </div>
+
+      <div class="row-between">
+        <label class="check"><input type="checkbox" id="lembrar" checked /><span>Lembrar de mim</span></label>
+        <button type="button" class="link-btn" id="esqueci">Esqueci a senha</button>
+      </div>
+
+      <button type="submit" class="btn primary block" id="loginBtn">Entrar</button>
+      <p class="hint">Demo: CPF <b>123.456.789-00</b> · senha <b>1234</b></p>
+      <p class="error" id="loginError"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div class="app" id="app" hidden>
+  <aside class="sidebar">
+    <div class="brand small">
+      <span class="logo">N</span>
+      <span class="brand-name">Nova Bank</span>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-view="home"><i>◎</i> Início</button>
+      <button class="nav-item" data-view="extrato"><i>≡</i> Extrato</button>
+      <button class="nav-item" data-view="pix"><i>⚡</i> PIX</button>
+      <button class="nav-item" data-view="transfer"><i>⇄</i> Transferência</button>
+      <button class="nav-item" data-view="cartoes"><i>▭</i> Cartões</button>
+    </nav>
+    <button class="btn ghost logout" id="logout">Sair da conta</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="muted small" id="greeting">Boa tarde,</p>
+        <h2 id="userName">Ana Souza</h2>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="hideBalance" title="Mostrar/ocultar saldo">👁</button>
+        <div class="avatar">AS</div>
+      </div>
+    </header>
+
+    <!-- HOME -->
+    <section class="view active" id="view-home">
+      <div class="grid-2">
+        <div class="card balance-card">
+          <p class="label">Saldo disponível</p>
+          <div class="balance" id="balanceValue">R$ 0,00</div>
+          <div class="balance-sub">
+            <span>Conta 1042-8 · Ag 0001</span>
+            <span class="pill up" id="balanceDelta">+ atualizado agora</span>
+          </div>
+          <div class="quick">
+            <button class="quick-btn" data-view="pix"><span>⚡</span>PIX</button>
+            <button class="quick-btn" data-view="transfer"><span>⇄</span>Transferir</button>
+            <button class="quick-btn" data-view="extrato"><span>≡</span>Extrato</button>
+            <button class="quick-btn" id="depositBtn"><span>＋</span>Depositar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="label">Resumo do mês</p>
+          <div class="summary">
+            <div><span class="dot in"></span><p class="muted small">Entradas</p><strong id="sumIn">R$ 0,00</strong></div>
+            <div><span class="dot out"></span><p class="muted small">Saídas</p><strong id="sumOut">R$ 0,00</strong></div>
+          </div>
+          <div class="bars" id="bars"></div>
+          <p class="muted small">Limite PIX por transação: R$ 5.000,00</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <p class="label">Últimas movimentações</p>
+          <button class="link-btn" data-view="extrato">Ver extrato</button>
+        </div>
+        <ul class="tx-list" id="homeTx"></ul>
+      </div>
+    </section>
+
+    <!-- EXTRATO -->
+    <section class="view" id="view-extrato">
+      <div class="card">
+        <div class="card-head">
+          <p class="label">Extrato completo</p>
+          <div class="filters" id="filters">
+            <button class="chip active" data-filter="all">Todos</button>
+            <button class="chip" data-filter="in">Entradas</button>
+            <button class="chip" data-filter="out">Saídas</button>
+          </div>
+        </div>
+        <input class="search" id="search" placeholder="Buscar por descrição..." />
+        <ul class="tx-list" id="extratoTx"></ul>
+        <p class="empty" id="extratoEmpty" hidden>Nenhuma movimentação encontrada.</p>
+      </div>
+    </section>
+
+    <!-- PIX -->
+    <section class="view" id="view-pix">
+      <div class="grid-2">
+        <form class="card" id="pixForm">
+          <p class="label">Enviar PIX</p>
+          <label>Chave PIX</label>
+          <input id="pixKey" placeholder="CPF, e-mail, telefone ou aleatória" />
+          <label>Valor</label>
+          <input id="pixValue" inputmode="decimal" placeholder="R$ 0,00" />
+          <label>Mensagem (opcional)</label>
+          <input id="pixMsg" placeholder="Ex: almoço" />
+          <div class="fast-values">
+            <button type="button" class="chip" data-val="50">R$ 50</button>
+            <button type="button" class="chip" data-val="100">R$ 100</button>
+            <button type="button" class="chip" data-val="250">R$ 250</button>
+            <button type="button" class="chip" data-val="500">R$ 500</button>
+          </div>
+          <button class="btn primary block" type="submit">Enviar PIX</button>
+          <p class="error" id="pixError"></p>
+        </form>
+
+        <div class="card">
+          <p class="label">Minhas chaves</p>
+          <ul class="keys">
+            <li><span>CPF</span><b>123.456.789-00</b></li>
+            <li><span>E-mail</span><b>ana.souza@email.com</b></li>
+            <li><span>Telefone</span><b>+55 11 99999-1234</b></li>
+            <li><span>Aleatória</span><b>a1b2-c3d4-e5f6</b></li>
+          </ul>
+          <p class="label mt">Contatos frequentes</p>
+          <div class="contacts" id="contacts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRANSFERÊNCIA -->
+    <section class="view" id="view-transfer">
+      <form class="card narrow" id="transferForm">
+        <p class="label">Transferência bancária (TED)</p>
+        <label>Nome do favorecido</label>
+        <input id="tName" placeholder="Nome completo" />
+        <div class="grid-3">
+          <div><label>Banco</label>
+            <select id="tBank">
+              <option>Nova Bank</option><option>Banco do Brasil</option>
+              <option>Itaú</option><option>Bradesco</option><option>Caixa</option><option>Nubank</option>
+            </select>
+          </div>
+          <div><label>Agência</label><input id="tAg" placeholder="0001" /></div>
+          <div><label>Conta</label><input id="tAcc" placeholder="12345-6" /></div>
+        </div>
+        <label>Valor</label>
+        <input id="tValue" inputmode="decimal" placeholder="R$ 0,00" />
+        <button class="btn primary block" type="submit">Transferir agora</button>
+        <p class="error" id="tError"></p>
+      </form>
+    </section>
+
+    <!-- CARTÕES -->
+    <section class="view" id="view-cartoes">
+      <div class="grid-2">
+        <div class="card">
+          <p class="label">Cartão virtual</p>
+          <div class="credit-card">
+            <div class="cc-top"><span>Nova Bank</span><span>VISA</span></div>
+            <div class="cc-num" id="ccNum">•••• •••• •••• 4821</div>
+            <div class="cc-bottom"><span>ANA SOUZA</span><span>08/30</span></div>
+          </div>
+          <div class="row-gap">
+            <button class="btn ghost" id="revealCard">Mostrar número</button>
+            <button class="btn ghost" id="blockCard">Bloquear cartão</button>
+          </div>
+        </div>
+        <div class="card">
+          <p class="label">Fatura atual</p>
+          <div class="balance small-balance">R$ 1.284,90</div>
+          <p class="muted small">Vencimento 10/09 · Limite disponível R$ 6.715,10</p>
+          <div class="progress"><span style="width:16%"></span></div>
+          <button class="btn primary block" id="payInvoice">Pagar fatura</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- loader / toast / modal -->
+<div class="loader" id="loader" hidden><div class="spinner"></div><p id="loaderText">Processando…</p></div>
+<div class="toast-wrap" id="toasts"></div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-card">
+    <div class="check-anim">✓</div>
+    <h3 id="modalTitle">Tudo certo!</h3>
+    <p id="modalText">Operação concluída.</p>
+    <button class="btn primary block" id="modalClose">Fechar</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
